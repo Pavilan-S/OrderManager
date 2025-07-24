@@ -1,4 +1,5 @@
 package view;
+import Menu.Menu;
 import com.mysql.cj.protocol.Resultset;
 import controller.UserController;
 import dao.DBConnection;
@@ -24,7 +25,7 @@ public class UserView {
         System.out.print("Enter username: ");
         String userName = scanner.nextLine();
         System.out.print("Enter password: ");
-        String password = scanner.nextLine(); 
+        String password = scanner.nextLine();
         Connection con= DBConnection.getConnection();
         if (UserController.userExists(userName)) {
             System.out.println("Username already exists. Please choose another username.");
@@ -38,8 +39,7 @@ public class UserView {
             ResultSet rs = null;
 
             try {
-                con.setCatalog("user_details");
-
+                con.setCatalog("pavilan_userdetails");
                 String userId = "";
                 Random rand = new Random();
                 boolean isUnique = false;
@@ -52,7 +52,6 @@ public class UserView {
                     checkStatement = con.prepareStatement(checkSql);
                     checkStatement.setString(1, userId);
                     rs = checkStatement.executeQuery();
-
                     if (!rs.next()) {
                         isUnique = true;
                     }
@@ -97,10 +96,26 @@ public class UserView {
 
         if (UserController.validateLogin(userName, password)) {
             System.out.println("Login successful!");
-            if (UserController.isAdmin(userName)) {
-                AdminView.adminMenu(userName);
-            } else {
-                UserMenu.userMenu(UserController.getUserByUsername(userName).getId());
+            try {
+                if (UserController.isAdmin(userName,password)) {
+                    System.out.println("Enter Your choice\n1.User Access\n2.Admin Access\n3.Back");
+                    int choice=scanner.nextInt();
+                    switch (choice){
+                        case 1:
+                            UserMenu.userMenu(UserController.getUserByUsername(userName).getId());
+                            break;
+                        case 2:
+                            AdminView.adminMenu(userName);
+                            break;
+                        default:
+                            Menu.menu();
+
+                    }
+                } else {
+                    UserMenu.userMenu(UserController.getUserByUsername(userName).getId());
+                }
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
         } else {
             System.out.println("Invalid username or password.");

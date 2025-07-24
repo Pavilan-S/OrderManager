@@ -1,11 +1,11 @@
 package dao;
 
+import com.sun.jdi.connect.spi.Connection;
 import model.Products;
 import java.util.ArrayList;
 
 public class ProductsDAO {
     private static ArrayList<Products> inventory = new ArrayList<>();
-
     public static void addProduct(Products product) {
         inventory.add(product);
     }

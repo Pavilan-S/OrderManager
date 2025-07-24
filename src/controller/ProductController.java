@@ -1,11 +1,40 @@
 package controller;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
+import com.mysql.cj.protocol.Resultset;
+import dao.DBConnection;
 import dao.ProductsDAO;
 import model.Products;
 
 public class ProductController {
     public static void addProduct(Products product) {
         ProductsDAO.addProduct(product);
+        Connection con= DBConnection.getConnection();
+        String productId=product.getProductId();
+        double price=product.getPrice();
+        String type=product.getType();
+        String unit=product.getUnit();
+        String name=product.getName();
+        int quantity=product.getQuantity();
+        PreparedStatement preparedStatement=null;
+        ResultSet rs=null;
+        try{
+            con.setCatalog("pavilan_userdetails");
+            String sql = "INSERT INTO Products (productId, name, price, quantity, unit, type) VALUES (?, ?, ?, ?, ?, ?)";
+            preparedStatement=con.prepareStatement(sql);
+            preparedStatement.setString(1,productId);
+            preparedStatement.setString(2,name);
+            preparedStatement.setDouble(3,price);
+            preparedStatement.setInt(4,quantity);
+            preparedStatement.setString(5,unit);
+            preparedStatement.setString(6,type);
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void removeProduct(Products product) {
@@ -16,72 +45,3 @@ public class ProductController {
         return ProductsDAO.getInventory();
     }
 }
-//package controller;
-//
-//import model.Products;
-//import java.sql.*;
-//import java.util.ArrayList;
-//
-//public class ProductController {
-//
-//    // Add product to DB
-//    public static void addProduct(Products product) {
-//        String sql = "INSERT INTO Products (productId, name, price, quantity, type) VALUES (?, ?, ?, ?, ?)";
-//        try (Connection con = DBConnection.getConnection();
-//             PreparedStatement ps = con.prepareStatement(sql)) {
-//
-//            ps.setString(1, product.getProductId());
-//            ps.setString(2, product.getName());
-//            ps.setDouble(3, product.getPrice());
-//            ps.setInt(4, product.getQuantity());
-//            ps.setString(5, product.getType());
-//            ps.executeUpdate();
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    // Remove product from DB by productId
-//    public static void removeProduct(Products product) {
-//        String sql = "DELETE FROM Products WHERE productId = ?";
-//        try (Connection con = DBConnection.getConnection();
-//             PreparedStatement ps = con.prepareStatement(sql)) {
-//
-//            ps.setString(1, product.getProductId());
-//            ps.executeUpdate();
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//    }
-//
-//    // Get all products from DB
-//    public static ArrayList<Products> getInventory() {
-//        ArrayList<Products> inventory = new ArrayList<>();
-//        String sql = "SELECT * FROM Products";
-//        try (Connection con = DBConnection.getConnection();
-//             PreparedStatement ps = con.prepareStatement(sql);
-//             ResultSet rs = ps.executeQuery()) {
-//
-//            while (rs.next()) {
-//                String productId = rs.getString("productId");
-//                String name = rs.getString("name");
-//                double price = rs.getDouble("price");
-//                int quantity = rs.getInt("quantity");
-//                String type = rs.getString("type");
-//
-//                Products product = new Products(name, price, quantity, type);
-//                // Since productId is generated in constructor, override it here
-//                // or better, create a constructor accepting productId
-//                product.setProductId(productId);
-//
-//                inventory.add(product);
-//            }
-//
-//        } catch (SQLException e) {
-//            e.printStackTrace();
-//        }
-//        return inventory;
-//    }
-//}

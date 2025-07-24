@@ -8,12 +8,14 @@ public class Products {
     private int quantity;
     private String productId;
     private String type;
+    private String unit;
 
-    public Products(String name, double price, int quantity, String type) {
+    public Products(String name, double price, int quantity,String unit, String type) {
         this.name = name;
         this.price = price;
         this.quantity = quantity;
         this.type = type;
+        this.unit=unit;
         this.productId = String.valueOf(type.charAt(0)) + String.valueOf(name.charAt(0)) + setProductId();
     }
 
@@ -26,7 +28,12 @@ public class Products {
     public String getName() {
         return name;
     }
-
+    public String getUnit(){
+        return unit;
+    }
+    public void setUnit(String unit){
+        this.unit=unit;
+    }
     public void setName(String name) {
         this.name = name;
     }

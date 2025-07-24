@@ -24,14 +24,14 @@ public class UserDAO {
         PreparedStatement preparedStatement = null;
         ResultSet rs = null;
         try {
-            con.setCatalog("user_details");
+            con.setCatalog("pavilan_userdetails");
             String sql = "SELECT 1 FROM users WHERE username = ? AND password = ?";
             preparedStatement = con.prepareStatement(sql);
             preparedStatement.setString(1, userName);
             preparedStatement.setString(2, password);
             rs = preparedStatement.executeQuery();
 
-            return rs.next();
+            return rs.isBeforeFirst();
         } catch (SQLException e) {
             e.printStackTrace();
             return false;
@@ -51,7 +51,7 @@ public class UserDAO {
         ResultSet rs = null;
 
         try {
-            con.setCatalog("user_details");
+            con.setCatalog("pavilan_userdetails");
             String sql = "SELECT * FROM users WHERE username = ?";
             preparedStatement = con.prepareStatement(sql);
             preparedStatement.setString(1, userName);
